@@ -32,33 +32,29 @@ Desenvolvido sem dependências de frameworks externos (vRP/ESX/QB), utilizando n
 
 ## 📸 Demonstração do Sistema
 
-````carousel
-![Início da Partida](assets/market.png)
-Visualização dos spawns (markers verde e vermelho) e efeitos de preparação no início da partida.
-<!-- slide -->
-![Fila PvP](assets/FILAPVP.png)
-Contador minimalista de jogadores na fila de espera.
-<!-- slide -->
-![Interface de Combate](assets/PLACAR.png)
-HUD completa durante o combate com Placar, Vida e contador de partidas ativas.
-<!-- slide -->
-![Aviso de Limites](assets/Screenshot_1.png)
-Sistema de alerta visual e sonoro quando o jogador tenta sair da arena.
-<!-- slide -->
-![Round Vencido](assets/vencido.png)
-Feedback visual quando o jogador vence um round.
-<!-- slide -->
-![Round Perdido](assets/round_perdido.png)
-Feedback visual quando o jogador perde um round.
-<!-- slide -->
-![Vitória Final](assets/Final.png)
-Anúncio do vencedor final da partida após completar a Melhor de 3.
-<!-- slide -->
-![Visão Oponente](assets/filatela2.png)
-Demonstração da sincronização correta da fila para múltiplos jogadores.
-<!-- slide -->
-![Preparação](assets/lutePVP.png)
-Animação de "LUTE!" e liberação dos jogadores para o combate.
+Abaixo, os principais componentes visuais e de interface do recurso:
+
+| ![Início da Partida](https://media.discordapp.net/attachments/1461861209526632448/1461861562800279684/market.png?ex=696c182c&is=696ac6ac&hm=738471c28e93a8914aa923be58262bebd2fc047b9a634efebd993168db844ef8&=&format=webp&quality=lossless) | ![Interface de Combate](https://media.discordapp.net/attachments/1461861209526632448/1461861890765619250/PLACAR.png?ex=696c187a&is=696ac6fa&hm=5f1a64edf7d8b8599554424c45ec17be485c335853ac38d8736f0e0a748ac139&=&format=webp&quality=lossless) |
+| :---: | :---: |
+| **Preparação e Spawns**: Visualização de markers (verde/vermelho) e efeitos de fade no countdown inicial. | **HUD de Combate**: Placar em tempo real, status de vida e contador de partidas ativas via GlobalState. |
+
+### Detalhes de UX e Sincronização
+<details>
+  <summary>Clique para expandir a galeria completa</summary>
+
+#### ⏳ Gerenciamento de Fila
+![Fila PvP](https://media.discordapp.net/attachments/1461861209526632448/1461861238857404446/FILAPVP.png?ex=696c17df&is=696ac65f&hm=ae56a1befcc913f38c8c80be5e14dc5cac2946dad44eb07861d3a3522d9d35cf&=&format=webp&quality=lossless)
+*Contador minimalista e sincronização simultânea para múltiplos jogadores na fila.*
+
+#### 🛡️ Sistema Anti-Fuga e Alertas
+![Aviso de Limites](https://media.discordapp.net/attachments/1461861209526632448/1461862129702535354/Screenshot_1.png?ex=696c18b3&is=696ac733&hm=997dc3e0b7a335729e53e468f33617be2abc4b35c3d682dc66889d18c0b45bff&=&format=webp&quality=lossless)
+*Feedback visual e sonoro imediato caso o jogador tente sair do perímetro delimitado da arena.*
+
+#### 🏆 Resultados e Transições
+![Vitória Final](https://media.discordapp.net/attachments/1461861209526632448/1461861495620239525/Final.png?ex=696c181c&is=696ac69c&hm=f304c012d1541623f59d7939ae3100b00890c6e3e60ff8ed268ed776b330b6cf&=&format=webp&quality=lossless)
+*Anúncios dinâmicos de round vencido/perdido e finalização da Melhor de 3 com restauração de estado.*
+
+</details>
 ````
 
 ---
