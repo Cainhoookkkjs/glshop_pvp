@@ -9,6 +9,10 @@ local inQueue = false
 local myScore, opponentScore = 0, 0
 local deadReported = false -- Evita o disparo de múltiplos eventos
 local myPlayerNum = 0 -- Índice do jogador na partida (1 ou 2)
+local lastDeathReport = 0 -- Timestamp do último report de morte (cooldown)
+
+-- EXPORT: Permite outros scripts (como survival) verificarem se está em PvP
+exports('InPvPMatch', function() return inMatch end)
 
 local queueCount = GlobalState.PvPQueueCount or 0
 local activeMatchesCount = GlobalState.PvPActiveMatches or 0
@@ -56,10 +60,15 @@ local function setupPlayerPvP(arena, playerNum, isNewRound)
     
     FreezeEntityPosition(ped, true)
     
-    -- Reset de Estado (Vida e Colete)
+    -- Reset de Estado (Vida reduzida para combate mais letal)
     SetEntityMaxHealth(ped, 200)
-    SetEntityHealth(ped, 200)
-    SetPedArmour(ped, 100)
+    SetEntityHealth(ped, 150) -- Vida reduzida (50 de vida real)
+    SetPedArmour(ped, 0) -- Sem colete para morrer mais rápido
+    
+    -- Remove modificadores de dano que possam atrapalhar
+    SetPlayerWeaponDamageModifier(PlayerId(), 2.0) -- Dobra o dano causado
+    SetPlayerMeleeWeaponDamageModifier(PlayerId(), 2.0)
+    
     GiveWeaponToPed(ped, GetHashKey(Config.Weapon), Config.Ammo, false, true)
 
     if not isNewRound then DoScreenFadeIn(1000) end
@@ -103,6 +112,12 @@ RegisterNetEvent('pfl:pvp:startMatch', function(arena, bucket, playerNum)
     currentArena = arena
     myScore, opponentScore = 0, 0
     
+    -- HABILITAR PVP: Permite dano entre jogadores
+    NetworkSetFriendlyFireOption(true)
+    SetCanAttackFriendly(PlayerPedId(), true, true)
+    SetEntityInvincible(PlayerPedId(), false)
+    LocalPlayer.state.Invincible = false
+    
     SetTimecycleModifier("MP_match_start")
     SetTimecycleModifierStrength(0.8)
 
@@ -115,11 +130,21 @@ end)
 
 RegisterNetEvent('pfl:pvp:nextRound', function(playerNum)
     deadReported = false -- Reset state for new round
-    myPlayerNum = playerNum -- Atualiza o índice caso mude (não deve mudar, mas por segurança)
+    myPlayerNum = playerNum
+    
     DoScreenFadeOut(500)
     Wait(600)
-    setupPlayerPvP(currentArena, playerNum, true)
+    
+    -- Configura jogador para o novo round (com contagem regressiva)
+    setupPlayerPvP(currentArena, playerNum, false) -- false = faz a contagem regressiva
+    
     DoScreenFadeIn(1000)
+    
+    -- Exibe mensagem de round
+    CreateThread(function()
+        local roundNum = myScore + opponentScore + 1
+        ShowScaleform("~y~ROUND " .. roundNum, "LUTE!", 2)
+    end)
 end)
 
 RegisterNetEvent('pfl:pvp:finishMatch', function(originalPos)
@@ -205,9 +230,14 @@ CreateThread(function()
             local ped = PlayerPedId()
             local health = GetEntityHealth(ped)
             
-            -- Detecção Robusta de Morte
-            if (health <= 0 or IsEntityDead(ped)) and not deadReported then
+            -- Detecção Robusta de Morte com COOLDOWN
+            local currentTime = GetGameTimer()
+            local cooldownActive = (currentTime - lastDeathReport) < 5000 -- 5 segundos de cooldown
+            
+            if IsEntityDead(ped) and not deadReported and not cooldownActive then
                 deadReported = true
+                lastDeathReport = currentTime
+                print(('[PvP Client] Morte detectada! Cooldown ativo por 5s. Timer: %d'):format(currentTime))
                 TriggerServerEvent('pfl:pvp:reportDeath')
             end
 

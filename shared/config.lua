@@ -20,7 +20,8 @@ Config.Arenas = {
 }
 
 -- Match Settings
-Config.CountdownTime = 5 
+Config.CountdownTime = 5
+Config.RoundsToWin = 2 -- Melhor de 3 (primeiro a 2 vitórias) 
 Config.MatchBucketStart = 100 -- Starting ID for Routing Buckets
 Config.DefaultBucket = 0 -- Target bucket after match concludes
 Config.Weapon = "WEAPON_PISTOL" 
